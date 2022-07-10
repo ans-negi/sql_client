@@ -1,26 +1,38 @@
-<h1>{{title}}</h1>
-<div style="display: flex; flex-grow: 1">
+<div class="header"> {{title}} </div>
+<div style="display: flex">
   <div>
+    <h1><u>Data Sets</u></h1>
+    <div class="box">
     <form class="example-form">
       <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Search</mat-label>
-        <input matInput type="search" placeholder="Ex. music table">
+        <input (keyup.enter)="after_user_search_table($event.target.value)" matInput type="search" placeholder="Ex. music table">
+        <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </form>
+      <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Limit: default 50 (<0 as 0)</mat-label>
+          <input (keyup.enter)="after_user_limit_table($event.target.value)" matInput type="search" placeholder="30">
+        </mat-form-field>
+      </form>
 
     <mat-selection-list #tables [multiple]="false">
       <mat-list-option *ngFor="let table of search_results" [value]="table" (click)="after_user_select_table(tables.selectedOptions.selected[0]?.value)">
+        <div class="center-vertically">
         {{table}}
+          <mat-icon>navigate_next</mat-icon>
+        </div>
       </mat-list-option>
     </mat-selection-list>
 
-    <p>
-      Option selected: {{tables.selectedOptions.selected[0]?.value}}
-    </p>
+    <p> Option selected: {{tables.selectedOptions.selected[0]?.value}} </p>
+    </div>
   </div>
 
-  <div>
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="after_tab_change($event.index)">
+  <div style="flex-grow: 1" class="table_container">
+  <h1><u>View Data</u></h1>
+  <mat-tab-group class="box" animationDuration="0ms" (selectedTabChange)="after_tab_change($event.index)">
     <mat-tab label="Top 50 rows">
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="table_datasource.data">
@@ -29,7 +41,7 @@
               {{column}}
             </th>
             <td mat-cell *matCellDef="let row">
-              {{row[column]}}
+              {{row[column].length>10?row[column].slice(0,10)+"...":row[column]}}
             </td>
           </ng-container>
 
@@ -47,7 +59,7 @@
     <mat-tab label="SQL Query">
       <form class="example-form">
         <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Search</mat-label>
+          <mat-label>Query</mat-label>
           <input (keyup.enter)="after_user_query($event.target.value)" matInput type="search" placeholder="Ex. SELECT * FROM ARTIST_TABLE;">
         </mat-form-field>
       </form>
@@ -61,7 +73,7 @@
               {{column}}
             </th>
             <td mat-cell *matCellDef="let row">
-              {{row[column]}}
+              {{row[column].length>10?row[column].slice(0,10)+"...":row[column]}}
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="query_datasource.columns"></tr>
